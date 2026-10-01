@@ -3,7 +3,7 @@ import { ReactNode } from "react";
 
 type BotaoProps = {
     onClick?: () => void;
-    size?: "large";
+    size?: "base" | "medium" | "large";
     children: ReactNode;
     colorsParam: "dark" | "light";
     weight: "400" | "600";
@@ -17,13 +17,13 @@ export const Button = ({
     weight,
 }: BotaoProps) => {
     const classes = {
-        base: "flex flex-row items-center w-80 h-11 text-sm rounded-md py-2 px-4 gap-2 cursor-pointer font-inter",
+        base: "flex flex-row items-center justify-center w-90 h-11 text-lg rounded-md py-2 px-4 gap-2 cursor-pointer font-inter rounded-xl",
         medium: "gap-4 py-3 px-7 text-base",
         large: "rounded-xl py-4.5 px-8 gap-5 text-base",
     };
 
     const colors = {
-        dark: "bg-[#4E8BB8] text-white",
+        dark: "bg-[#4E8BB8] text-white", //Azul// 
         light: "bg-[#8ED5FF] text-[#00354A]",
     };
 
