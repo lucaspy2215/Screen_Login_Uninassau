@@ -9,7 +9,7 @@ type BotaoProps = {
     weight: "400" | "600";
 };
 
-export const Button = ({
+export  const Button = ({
     children,
     size,
     colorsParam,
