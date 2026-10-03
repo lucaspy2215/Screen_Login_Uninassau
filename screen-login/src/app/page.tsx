@@ -1,5 +1,7 @@
 import { Button } from "@/components/buttons";
 import { Logo } from "@/components/logo";
+import {InputField} from "@/components/label";
+
 
 export default function LoginPage() {
   return (
