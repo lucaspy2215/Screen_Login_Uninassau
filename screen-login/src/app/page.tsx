@@ -1,6 +1,6 @@
 import { Button } from "@/components/buttons";
 import { Logo } from "@/components/logo";
-import {InputField} from "@/components/label";
+import { InputField } from "@/components/input";
 
 
 export default function LoginPage() {
