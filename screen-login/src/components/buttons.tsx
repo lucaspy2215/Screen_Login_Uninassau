@@ -6,6 +6,7 @@ type BotaoProps = {
     children: ReactNode;
     colorsParam: "dark" | "light";
     weight: "400" | "600";
+    icon?: ReactNode;
 };
 
 export const Button = ({
@@ -14,8 +15,16 @@ export const Button = ({
     colorsParam,
     onClick,
     weight,
+    icon,
 }: BotaoProps) => {
-    const common = "flex flex-row items-center justify-center cursor-pointer font-inter rounded-xl";
+    const common = "relative w-full flex flex-row items-center justify-center cursor-pointer font-inter rounded-xl";
+
+    const IconClasses = {
+        base: "w-5 h-5",
+        medium: "w-6 h-6",
+        large: "w-7 h-7",
+    };
+
 
     const classes = {
         base: "h-11 py-2 px-4 gap-2 text-lg",
@@ -38,6 +47,11 @@ export const Button = ({
             className={`${common} ${classes[size]} ${colors[colorsParam]} ${weightFont[weight]}`}
             onClick={onClick}
         >
+            {icon && (
+                <span className={`absolute left-4 ${IconClasses[size]} [&>svg]:w-full [&>svg]:h-full`}>
+                    {icon}
+                </span>
+            )}
             {children}
         </button>
     );

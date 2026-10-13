@@ -1,6 +1,7 @@
 import { Button } from "@/components/buttons";
 import { Logo } from "@/components/logo";
 import { InputField } from "@/components/input";
+import { MdCalendarMonth, MdOutlineManageAccounts, MdOutlinePerson } from "react-icons/md";
 
 
 export default function LoginPage() {
@@ -14,11 +15,14 @@ export default function LoginPage() {
         </h1>
 
         <div className="flex flex-col items-center justify-center gap-4 mt-4 w-full max-w-90">
-          <Button size="base" colorsParam="dark" weight="400">
-            Login
+          <Button size="base" colorsParam="dark" weight="400" icon={<MdCalendarMonth />}>
+            AGENDA
           </Button>
-          <Button size="base" colorsParam="dark" weight="400">
-            Register
+          <Button size="base" colorsParam="dark" weight="400" icon={<MdOutlineManageAccounts />}>
+            ADMINISTRAÇÃO
+          </Button>
+          <Button size="base" colorsParam="dark" weight="400" icon={<MdOutlinePerson />}>
+            PROFESSOR
           </Button>
         </div>
       </div>
