@@ -34,6 +34,9 @@ export default function HomePage() {
             colorsParam="dark"
             weight="600"
             iconLeft={<Users size={20} />}
+            onClick={() => {
+              router.push("/login");
+            }}
           >
             ADMINISTRAÇÃO
           </Button>
@@ -42,6 +45,9 @@ export default function HomePage() {
             colorsParam="dark"
             weight="600"
             iconLeft={<UserRound size={20} />}
+            onClick={() => {
+              router.push("/login");
+            }}
           >
             PROFESSOR
           </Button>
