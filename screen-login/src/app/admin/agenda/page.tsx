@@ -2,7 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { AgendaTable } from "@/components/agenda-table";
+import { AgendaView } from "@/components/agenda-view";
 import { Button } from "@/components/buttons";
 
 export default function AdminAgendaPage() {
@@ -22,7 +22,7 @@ export default function AdminAgendaPage() {
         </Button>
       </div>
 
-      <AgendaTable/>
+      <AgendaView />
 
       <h3 className="mt-auto pb-4 text-lg font-semibold text-black">
         AGENDAMENTO LAB.
