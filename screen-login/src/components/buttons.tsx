@@ -4,7 +4,7 @@ type BotaoProps = {
   onClick?: () => void;
   size?: "base" | "medium" | "large" | "small" | "text";
   children: ReactNode;
-  colorsParam: "dark" | "light" | "navy" | "link";
+  colorsParam: "dark" | "light" | "navy" | "link" | "danger";
   weight: "400" | "600";
   iconLeft?: ReactNode;
 };
@@ -30,6 +30,7 @@ export const Button = ({
     light: "bg-[#8ED5FF] text-[#00354A]",
     navy: "bg-[#244870] text-white", //Azul escuro//
     link: "bg-transparent text-[#4E8BB8]",
+    danger: "bg-[#D64045] text-white", //Vermelho//
   };
 
   const weightFont = {
