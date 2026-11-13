@@ -7,6 +7,7 @@ type BotaoProps = {
   colorsParam: "dark" | "light" | "navy" | "link" | "danger";
   weight: "400" | "600";
   iconLeft?: ReactNode;
+  className?: string;
 };
 
 export const Button = ({
@@ -16,6 +17,7 @@ export const Button = ({
   onClick,
   weight,
   iconLeft,
+  className = "",
 }: BotaoProps) => {
   const classes = {
     base: "flex flex-row items-center justify-center w-90 h-11 text-lg rounded-md py-2 px-4 gap-4 cursor-pointer font-inter rounded-xl",
@@ -40,7 +42,7 @@ export const Button = ({
 
   return (
     <button
-      className={`${classes.base} ${size === "large" ? classes.large : ""} ${size === "small" ? classes.small : ""} ${size === "text" ? classes.text : ""} ${colors[colorsParam]} ${weightFont[weight]}`}
+      className={`${classes.base} ${size === "medium" ? classes.medium : ""} ${size === "large" ? classes.large : ""} ${size === "small" ? classes.small : ""} ${size === "text" ? classes.text : ""} ${colors[colorsParam]} ${weightFont[weight]} ${className}`}
       onClick={onClick}
     >
       {iconLeft}
