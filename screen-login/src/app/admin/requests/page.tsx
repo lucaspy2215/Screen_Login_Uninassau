@@ -17,7 +17,7 @@ const requests = [
 
 const horaryDay = ["Manhã", "Noite"];
 
-const initials = (name: string) =>
+const Namenitials = (name: string) =>
   name
     .split(" ")
     .map((word) => word[0])
@@ -93,7 +93,7 @@ export default function RequestsPage() {
               className="flex cursor-pointer items-center gap-4 rounded-2xl bg-[#AEBBCD] p-3"
             >
               <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#244870] font-bold text-white">
-                {initials(item.name)}
+                {Namenitials(item.name)}
               </span>
               <div className="font-semibold text-[#4A6A91]">
                 <p>
