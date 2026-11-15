@@ -7,6 +7,7 @@ export const timeSlots: Record<number, string> = {
   4: "21:00 à 21:50",
 };
 
+
 const request = async (path: string, options?: RequestInit) => {
   const confirmation = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
     headers: { "Content-Type": "application/json" },
