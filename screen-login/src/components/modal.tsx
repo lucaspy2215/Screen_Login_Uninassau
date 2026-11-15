@@ -5,10 +5,19 @@ type ModalProps = {
   open: boolean;
   onClose: () => void;
   closeButton?: boolean;
-  children: ReactNode;
+  title?: string;
+  text?: string;
+  children?: ReactNode;
 };
 
-export const Modal = ({ open, onClose, closeButton, children }: ModalProps) => {
+export const Modal = ({
+  open,
+  onClose,
+  closeButton,
+  title,
+  text,
+  children,
+}: ModalProps) => {
   if (!open) return null;
 
   return (
@@ -25,6 +34,14 @@ export const Modal = ({ open, onClose, closeButton, children }: ModalProps) => {
             <X size={18} />
           </button>
         )}
+
+        {title && (
+          <div className="text-center">
+            <h2 className="font-bold text-[#244870]">{title}</h2>
+            {text && <p className="mt-2 font-semibold text-[#4A6A91]">{text}</p>}
+          </div>
+        )}
+
         {children}
       </div>
     </div>
