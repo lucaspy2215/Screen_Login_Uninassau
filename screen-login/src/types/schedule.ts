@@ -8,4 +8,5 @@ export type Schedule = {
   shift: string;
   time_slot: number;
   status: "active" | "completed";
+  
 };
