@@ -1,12 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import { ChevronLeft, Plus, Search, SquarePen, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/buttons";
 import { Modal } from "@/components/modal";
-import { createSchedule, getSchedules, timeSlots, updateSchedule } from "@/lib/schedules";
-import { Schedule } from "@/types/schedule";
+import { useSchedules } from "@/hooks/useSchedules";
+import { formatDayMonth, formatInitials, formatWeekday } from "@/lib/format";
+import { timeSlots } from "@/lib/schedules";
 
 const textFields = [
   { label: "Professor", name: "teacher" },
@@ -14,81 +14,40 @@ const textFields = [
   { label: "Curso", name: "course" },
 ];
 
-const fieldClass = "mt-1 h-10 w-full rounded-lg border border-[#AEBBCD] bg-white px-3 text-[#244870]";
+const labs = [
+  { value: "Lab 01", label: "Laboratório 01" },
+  { value: "Lab 02", label: "Laboratório 02" },
+];
+
+const shifts = ["Manhã", "Noite"];
+
+const fieldClass =
+  "mt-1 h-10 w-full rounded-lg border border-[#AEBBCD] bg-white px-3 text-[#244870]";
 const labelClass = "block font-semibold text-[#244870]";
 const errorClass = "text-sm font-semibold text-[#D64045]";
 const iconButtonClass = "h-9! w-9! p-0!";
 
-const Nameinitials = (name: string) =>
-  name
-    .split(" ")
-    .map((word) => word[0])
-    .slice(0, 2)
-    .join("");
-
-// "2026-11-16" -> "16/11"
-const formatDay = (date: string) =>
-  date.split("-").reverse().slice(0, 2).join("/");
-
-// "2026-11-16" -> "seg"
-const weekdayName = (date: string) =>
-  new Date(`${date}T00:00:00`)
-    .toLocaleDateString("pt-BR", { weekday: "short" })
-    .replace(".", "");
-
 export default function SchedulesPage() {
   const router = useRouter();
-  const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [search, setSearch] = useState("");
-  const [open, setOpen] = useState(false);
-  const [editing, setEditing] = useState<Schedule | null>(null);
-  const [edited, setEdited] = useState(false);
-  const [error, setError] = useState("");
-  const [loadFailed, setLoadFailed] = useState(false);
-
-  const loadSchedules = useCallback(
-    () => getSchedules().then(setSchedules).catch(() => setLoadFailed(true)),
-    [],
-  );
-
-  useEffect(() => {
-    loadSchedules();
-  }, [loadSchedules]);
-
-  const filtered = schedules.filter((item) =>
-    item.teacher.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  const closeModals = () => {
-    setOpen(false);
-    setEditing(null);
-    setError("");
-  };
-
-  const toSendFormCreate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
-    try {
-      await createSchedule(data);
-      await loadSchedules();
-      closeModals();
-    } catch (err) {
-      setError((err as Error).message);
-    }
-  };
-
-  const toSendFormEdit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget));
-    try {
-      await updateSchedule(editing!.id, data);
-      await loadSchedules();
-      closeModals();
-      setEdited(true);
-    } catch (err) {
-      setError((err as Error).message);
-    }
-  };
+  const {
+    filtered,
+    search,
+    setSearch,
+    creating,
+    setCreating,
+    editing,
+    setEditing,
+    deleting,
+    setDeleting,
+    editSuccess,
+    setEditSuccess,
+    error,
+    loadFailed,
+    closeModals,
+    handleCreateSubmit,
+    handleEditSubmit,
+    confirmDelete,
+  } = useSchedules();
 
   return (
     <div className="flex min-h-screen flex-col items-center bg-white pt-16">
@@ -104,7 +63,7 @@ export default function SchedulesPage() {
             weight="600"
             iconLeft={<Plus size={20} />}
             className="w-32!"
-            onClick={() => setOpen(true)}
+            onClick={() => setCreating(true)}
           >
             Novo
           </Button>
@@ -133,11 +92,11 @@ export default function SchedulesPage() {
               className="flex items-center gap-4 rounded-2xl bg-[#AEBBCD] p-3"
             >
               <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#244870] font-bold text-white">
-                {Nameinitials(item.teacher)}
+                {formatInitials(item.teacher)}
               </span>
               <div className="flex-1 font-semibold text-[#4A6A91]">
                 <p className="text-[#244870]">{item.teacher}</p>
-                <p>Aula {formatDay(item.date)}</p>
+                <p>Aula {formatDayMonth(item.date)}</p>
                 <p>{timeSlots[item.time_slot]}</p>
               </div>
               <div className="flex gap-2">
@@ -149,7 +108,12 @@ export default function SchedulesPage() {
                 >
                   <SquarePen size={18} />
                 </Button>
-                <Button colorsParam="navy" weight="400" className={iconButtonClass}>
+                <Button
+                  colorsParam="navy"
+                  weight="400"
+                  className={iconButtonClass}
+                  onClick={() => setDeleting(item)}
+                >
                   <Trash2 size={18} />
                 </Button>
               </div>
@@ -158,8 +122,8 @@ export default function SchedulesPage() {
         </ul>
       </div>
 
-      <Modal open={open} onClose={closeModals} closeButton>
-        <form onSubmit={toSendFormCreate} className="flex flex-col gap-3">
+      <Modal open={creating} onClose={closeModals} closeButton>
+        <form onSubmit={handleCreateSubmit} className="flex flex-col gap-3">
           <h2 className="font-bold text-[#244870]">Criar reserva</h2>
 
           {textFields.map(({ label, name }) => (
@@ -172,8 +136,11 @@ export default function SchedulesPage() {
           <label className={labelClass}>
             Laboratório
             <select name="lab" className={fieldClass}>
-              <option value="Lab 01">Laboratório 01</option>
-              <option value="Lab 02">Laboratório 02</option>
+              {labs.map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
             </select>
           </label>
 
@@ -185,8 +152,9 @@ export default function SchedulesPage() {
             <label className={labelClass}>
               Turno
               <select name="shift" className={fieldClass}>
-                <option>Manhã</option>
-                <option>Noite</option>
+                {shifts.map((shift) => (
+                  <option key={shift}>{shift}</option>
+                ))}
               </select>
             </label>
           </div>
@@ -213,13 +181,15 @@ export default function SchedulesPage() {
       </Modal>
 
       <Modal open={!!editing} onClose={closeModals} closeButton>
-        <form onSubmit={toSendFormEdit} className="flex flex-col gap-3">
+        <form onSubmit={handleEditSubmit} className="flex flex-col gap-3">
           <div>
             <h2 className="font-bold text-[#244870]">Editar Reserva</h2>
             <p className="text-[#4A6A91]">
               {editing?.lab} ·{" "}
-              <span className="capitalize">{weekdayName(editing?.date ?? "")}</span> ·{" "}
-              {timeSlots[editing?.time_slot ?? 1]}
+              <span className="capitalize">
+                {formatWeekday(editing?.date ?? "")}
+              </span>{" "}
+              · {timeSlots[editing?.time_slot ?? 1]}
             </p>
           </div>
 
@@ -252,9 +222,42 @@ export default function SchedulesPage() {
         </form>
       </Modal>
 
+      <Modal open={!!deleting} onClose={closeModals}>
+        <h2 className="font-bold text-[#244870]">EXCLUIR RESERVA?</h2>
+        <p className="mt-2 font-semibold text-[#4A6A91]">
+          {deleting?.teacher} · {deleting && formatDayMonth(deleting.date)} ·{" "}
+          {timeSlots[deleting?.time_slot ?? 1]}
+        </p>
+
+        {error && <p className={errorClass}>{error}</p>}
+
+        <div className="mt-6 flex gap-3">
+          <div className="flex-1 [&>button]:w-full!">
+            <Button
+              size="small"
+              colorsParam="danger"
+              weight="600"
+              onClick={confirmDelete}
+            >
+              Excluir
+            </Button>
+          </div>
+          <div className="flex-1 [&>button]:w-full!">
+            <Button
+              size="small"
+              colorsParam="navy"
+              weight="600"
+              onClick={closeModals}
+            >
+              Cancelar
+            </Button>
+          </div>
+        </div>
+      </Modal>
+
       <Modal
-        open={edited}
-        onClose={() => setEdited(false)}
+        open={editSuccess}
+        onClose={() => setEditSuccess(false)}
         closeButton
         title="EDIÇÃO CONCLUÍDA!"
         text="As alterações já estão visíveis no painel de reservas."
