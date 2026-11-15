@@ -17,7 +17,7 @@ const requests = [
 
 const horaryDay = ["Manhã", "Noite"];
 
-const InitialsName = (name: string) =>
+const initials = (name: string) =>
   name
     .split(" ")
     .map((word) => word[0])
@@ -28,9 +28,7 @@ export default function RequestsPage() {
   const router = useRouter();
   const [shift, setShift] = useState("Noite");
   const [search, setSearch] = useState("");
-  const [selected, setSelected] = useState<(typeof requests)[number] | null>(
-    null,
-  );
+  const [selected, setSelected] = useState<(typeof requests)[number] | null>(null);
   const [approved, setApproved] = useState(false);
 
   const filtered = requests.filter(
@@ -41,7 +39,7 @@ export default function RequestsPage() {
         .includes(search.toLowerCase()),
   );
 
-  const handleAccept = () => {
+  const apiAccept = () => {
     // TODO: call API to approve the request
     setSelected(null);
     setApproved(true);
@@ -95,7 +93,7 @@ export default function RequestsPage() {
               className="flex cursor-pointer items-center gap-4 rounded-2xl bg-[#AEBBCD] p-3"
             >
               <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#244870] font-bold text-white">
-                {InitialsName(item.name)}
+                {initials(item.name)}
               </span>
               <div className="font-semibold text-[#4A6A91]">
                 <p>
@@ -115,36 +113,25 @@ export default function RequestsPage() {
         <p className="mt-4 font-bold text-[#244870]">{selected?.reason}</p>
         <div className="mt-6 flex gap-3">
           <div className="flex-1 [&>button]:w-full!">
-            <Button
-              size="small"
-              colorsParam="navy"
-              weight="600"
-              onClick={handleAccept}
-            >
+            <Button size="small" colorsParam="navy" weight="600" onClick={apiAccept}>
               Aceitar
             </Button>
           </div>
           <div className="flex-1 [&>button]:w-full!">
-            <Button
-              size="small"
-              colorsParam="danger"
-              weight="600"
-              onClick={() => setSelected(null)}
-            >
+            <Button size="small" colorsParam="danger" weight="600" onClick={() => setSelected(null)}>
               Recusar
             </Button>
           </div>
         </div>
       </Modal>
 
-      <Modal open={approved} onClose={() => setApproved(false)} closeButton>
-        <div className="text-center">
-          <h2 className="font-bold text-[#244870]">SOLICITAÇÃO APROVADA!</h2>
-          <p className="mt-2 font-semibold text-[#4A6A91]">
-            O novo horário já está visível no painel de reservas.
-          </p>
-        </div>
-      </Modal>
+      <Modal
+        open={approved}
+        onClose={() => setApproved(false)}
+        closeButton
+        title="SOLICITAÇÃO APROVADA!"
+        text="O novo horário já está visível no painel de reservas."
+      />
     </div>
   );
 }
