@@ -23,3 +23,10 @@ export const updateTeacher = (id: number, data: Record<string, unknown>) =>
 
 export const deleteTeacher = (id: number) =>
   request(`/users/${id}`, { method: "DELETE" });
+
+
+export const activateAccount = (token: string, password: string) =>
+  request("/users/activate", {
+    method: "POST",
+    body: JSON.stringify({ token, password }),
+  });
