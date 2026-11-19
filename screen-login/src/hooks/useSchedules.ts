@@ -15,6 +15,8 @@ export const useSchedules = () => {
   const [editing, setEditing] = useState<Schedule | null>(null);
   const [deleting, setDeleting] = useState<Schedule | null>(null);
   const [editSuccess, setEditSuccess] = useState(false);
+  const [createSuccess, setCreateSuccess] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [error, setError] = useState("");
   const [loadFailed, setLoadFailed] = useState(false);
 
@@ -61,7 +63,10 @@ export const useSchedules = () => {
 
   const handleCreateSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
     const data = closedFormValues(e);
-    runAndRefresh(() => createSchedule(data));
+    runAndRefresh(
+      () => createSchedule(data),
+      () => setCreateSuccess(true),
+    );
   };
 
   const handleEditSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
@@ -73,7 +78,10 @@ export const useSchedules = () => {
   };
 
   const confirmDelete = () =>
-    runAndRefresh(() => deleteSchedule(deleting!.id));
+    runAndRefresh(
+      () => deleteSchedule(deleting!.id),
+      () => setDeleteSuccess(true),
+    );
 
   return {
     filtered,
@@ -87,6 +95,10 @@ export const useSchedules = () => {
     setDeleting,
     editSuccess,
     setEditSuccess,
+    createSuccess,
+    setCreateSuccess,
+    deleteSuccess,
+    setDeleteSuccess,
     error,
     loadFailed,
     closeModals,
