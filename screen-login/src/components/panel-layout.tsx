@@ -1,6 +1,7 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Bell,
   CalendarCog,
@@ -10,7 +11,9 @@ import {
   UserCog,
   UserRound,
 } from "lucide-react";
+
 import { Sidebar } from "@/components/sidebar";
+import { getSession } from "@/lib/auth";
 
 const menus = {
   admin: {
@@ -45,20 +48,56 @@ const menus = {
   },
 };
 
-type PanelLayoutProps = { role: keyof typeof menus; children: ReactNode };
+type PanelLayoutProps = {
+  role: keyof typeof menus;
+  children: ReactNode;
+};
 
 export const PanelLayout = ({ role, children }: PanelLayoutProps) => {
   const [open, setOpen] = useState(false);
+  const [checked, setChecked] = useState(false);
+
+  const router = useRouter();
+
+  useEffect(() => {
+    const session = getSession();
+
+    if (!session) {
+      router.replace("/login");
+      return;
+    }
+
+    const expectedRole = role === "admin" ? "admin" : "teacher";
+
+    if (session.user.role !== expectedRole) {
+      if (session.user.role === "admin") {
+        router.replace("/admin/agenda");
+      } else {
+        router.replace("/professor/agenda");
+      }
+
+      return;
+    }
+
+    setChecked(true);
+  }, [role, router]);
+
+  if (!checked) {
+    return null;
+  }
 
   return (
     <>
       <button
+        type="button"
         onClick={() => setOpen(true)}
         className="fixed left-4 top-4 z-10 text-[#244870]"
       >
         <Menu />
       </button>
+
       <Sidebar {...menus[role]} open={open} onClose={() => setOpen(false)} />
+
       {children}
     </>
   );
