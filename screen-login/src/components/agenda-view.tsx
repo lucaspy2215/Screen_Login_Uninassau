@@ -16,17 +16,41 @@ const legend = [
 ];
 
 const formatDate = (date: Date) =>
-  date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" });
+  date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+const getMonday = (date: Date) => {
+  const monday = new Date(date);
+  const day = monday.getDay();
+  const difference = day === 0 ? -6 : 1 - day;
+
+  monday.setDate(monday.getDate() + difference);
+  monday.setHours(0, 0, 0, 0);
+
+  return monday;
+};
 
 export const AgendaView = () => {
-  const [week, setWeek] = useState(1);
+  const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
+  const [laboratory, setLaboratory] = useState("Lab 01");
+  const [shift, setShift] = useState<"Manhã" | "Noite">("Manhã");
 
-  const start = new Date(2026, 7, 10 + (week - 1) * 7); // monday of week 1
-  const end = new Date(start);
-  end.setDate(start.getDate() + 4);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 4);
+
+  const changeWeek = (amount: number) => {
+    setWeekStart((current) => {
+      const next = new Date(current);
+      next.setDate(next.getDate() + amount * 7);
+      return next;
+    });
+  };
 
   const navButton =
-    "flex h-12 w-14 items-center justify-center rounded-lg bg-[#244870] text-white disabled:opacity-40";
+    "flex h-12 w-14 items-center justify-center rounded-lg bg-[#244870] text-white";
 
   return (
     <div className="flex w-full max-w-md flex-col gap-6 px-4">
@@ -34,9 +58,22 @@ export const AgendaView = () => {
         {filters.map(({ label, options }) => (
           <label key={label} className="flex-1 font-semibold text-[#244870]">
             {label}
-            <select className="mt-1 h-10 w-full rounded-lg bg-[#244870] px-3 text-white">
+
+            <select
+              value={label === "Laboratório" ? laboratory : shift}
+              onChange={(e) => {
+                if (label === "Laboratório") {
+                  setLaboratory(e.target.value);
+                } else {
+                  setShift(e.target.value as "Manhã" | "Noite");
+                }
+              }}
+              className="mt-1 h-10 w-full rounded-lg bg-[#244870] px-3 text-white"
+            >
               {options.map((option) => (
-                <option key={option}>{option}</option>
+                <option key={option} value={option}>
+                  {option}
+                </option>
               ))}
             </select>
           </label>
@@ -46,21 +83,31 @@ export const AgendaView = () => {
       <div className="flex items-center justify-between rounded-xl bg-[#EAF4FF]">
         <button
           className={navButton}
-          disabled={week === 1}
-          onClick={() => setWeek(week - 1)}
+          onClick={() => changeWeek(-1)}
+          aria-label="Semana anterior"
         >
           <ChevronLeft />
         </button>
-        <p className="text-center text-xl font-bold text-[#244870]">
-          Semana {String(week).padStart(2, "0")} <br />
-          {formatDate(start)} à {formatDate(end)}
-        </p>
-        <button className={navButton} onClick={() => setWeek(week + 1)}>
+
+        <div className="text-center">
+          <p className="text-lg font-bold text-[#244870]">
+            {formatDate(weekStart)}
+          </p>
+          <p className="text-sm font-semibold text-[#244870]">
+            até {formatDate(weekEnd)}
+          </p>
+        </div>
+
+        <button
+          className={navButton}
+          onClick={() => changeWeek(1)}
+          aria-label="Próxima semana"
+        >
           <ChevronRight />
         </button>
       </div>
 
-      <AgendaTable />
+      <AgendaTable shift={shift} weekStart={weekStart} />
 
       <div className="flex justify-around text-xs font-semibold text-[#4E8BB8]">
         {legend.map(({ text, color }) => (
