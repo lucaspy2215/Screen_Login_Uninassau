@@ -8,7 +8,7 @@ import { Button } from "@/components/buttons";
 import { Input } from "@/components/input";
 import { Logo } from "@/components/logo";
 import { request } from "@/lib/api";
-import { saveSession } from "@/lib/auth";
+import { saveSession, AuthSession } from "@/lib/auth";
 
 export default function LoginPage() {
   const [show, setShow] = useState(false);
@@ -23,10 +23,10 @@ export default function LoginPage() {
     event.preventDefault();
 
     setError("");
-   setLoading(true);
+    setLoading(true);
 
     try {
-      const result = await request("/users/login", {
+      const result = await request<AuthSession>("/users/login", {
         method: "POST",
         body: JSON.stringify({
           email: email.trim(),
