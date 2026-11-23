@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { ChevronLeft, Plus, Search, SquarePen, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -6,12 +6,21 @@ import { Button } from "@/components/buttons";
 import { Modal } from "@/components/modal";
 import { useTeachers } from "@/hooks/useTeachers";
 import { formatInitials } from "@/lib/format";
-import { errorClass, fieldClass, iconButtonClass, labelClass } from "@/lib/styles";
+import {
+  errorClass,
+  fieldClass,
+  iconButtonClass,
+  labelClass,
+} from "@/lib/styles";
 
 const fields = [
   { label: "Nome", name: "name", type: "text" },
-  { label: "Email", name: "email", type: "email" },
-  { label: "Matrícula", name: "matricula", type: "text" },
+  { label: "E-mail", name: "email", type: "email" },
+  {
+    label: "Matrícula",
+    name: "registration_number",
+    type: "text",
+  },
 ] as const;
 
 const feedbackTexts = {
@@ -99,7 +108,7 @@ export default function TeachersPage() {
               <div className="min-w-0 flex-1 text-sm font-semibold text-[#4A6A91]">
                 <p className="text-[#244870]">{teacher.name}</p>
                 <p className="truncate">{teacher.email}</p>
-                <p>{teacher.matricula}</p>
+                <p>{teacher.registration_number}</p>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -136,39 +145,41 @@ export default function TeachersPage() {
               <input
                 name={name}
                 type={type}
-                defaultValue={editing?.[name]}
+                defaultValue={editing?.[name] ?? ""}
                 required
                 className={fieldClass}
               />
             </label>
           ))}
-
-          {error && <p className={errorClass}>{error}</p>}
-
-          <div className="mt-3 flex justify-center">
-            <Button size="small" colorsParam="navy" weight="600">
-              {editing ? "Editar" : "Adicionar"}
-            </Button>
-          </div>
         </form>
       </Modal>
 
       <Modal open={!!deleting} onClose={closeModals}>
         <h2 className="font-bold text-[#244870]">EXCLUIR PROFESSOR?</h2>
         <p className="mt-2 font-semibold text-[#4A6A91]">
-          {deleting?.name} · {deleting?.matricula}
+          {deleting?.name} · {deleting?.registration_number}
         </p>
 
         {error && <p className={errorClass}>{error}</p>}
 
         <div className="mt-6 flex gap-3">
           <div className="flex-1 [&>button]:w-full!">
-            <Button size="small" colorsParam="danger" weight="600" onClick={confirmDelete}>
+            <Button
+              size="small"
+              colorsParam="danger"
+              weight="600"
+              onClick={confirmDelete}
+            >
               Excluir
             </Button>
           </div>
           <div className="flex-1 [&>button]:w-full!">
-            <Button size="small" colorsParam="navy" weight="600" onClick={closeModals}>
+            <Button
+              size="small"
+              colorsParam="navy"
+              weight="600"
+              onClick={closeModals}
+            >
               Cancelar
             </Button>
           </div>

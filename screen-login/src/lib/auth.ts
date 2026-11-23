@@ -6,7 +6,7 @@ export type AuthUser = {
   role: "admin" | "teacher";
 };
 
-type AuthSession = {
+export type AuthSession = {
   token: string;
   user: AuthUser;
 };

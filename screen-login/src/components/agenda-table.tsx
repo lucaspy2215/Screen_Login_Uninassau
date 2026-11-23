@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { Schedule } from "@/types/schedule";
 
 const days = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"];
 
@@ -17,25 +18,11 @@ const nightHorary = [
   "21:00 às 21:50",
 ];
 
-type Reservation = {
-  text: string;
-  type: "reservado" | "outro";
-};
-
-const reverse: Record<string, Reservation> = {
-  "0-1": { text: "Redes Prof. Danielly Gualberto", type: "reservado" },
-  "0-3": { text: "EAD", type: "outro" },
-  "3-2": { text: "Machine Learning Prof. Daniel Marques", type: "reservado" },
-};
-
-const colors = {
-  reservado: "bg-[#244870] text-white",
-  outro: "bg-[#5E8AB4] text-white",
-};
-
 type AgendaTableProps = {
   shift: "Manhã" | "Noite";
   weekStart: Date;
+  laboratory: string;
+  reservations: Schedule[];
 };
 
 const formatDay = (date: Date) =>
@@ -44,8 +31,32 @@ const formatDay = (date: Date) =>
     month: "2-digit",
   });
 
-export const AgendaTable = ({ shift, weekStart }: AgendaTableProps) => {
+const formatISODate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+export const AgendaTable = ({
+  shift,
+  weekStart,
+  laboratory,
+  reservations,
+}: AgendaTableProps) => {
   const horary = shift === "Manhã" ? morningHorary : nightHorary;
+
+  const weekDays = days.map((day, index) => {
+    const date = new Date(weekStart);
+    date.setDate(weekStart.getDate() + index);
+
+    return {
+      day,
+      date,
+      dateKey: formatISODate(date),
+    };
+  });
 
   return (
     <div className="grid grid-cols-6 border border-[#5E8AB4] text-center text-[10px] text-black">
@@ -53,20 +64,15 @@ export const AgendaTable = ({ shift, weekStart }: AgendaTableProps) => {
         Horário
       </div>
 
-      {days.map((day, index) => {
-        const date = new Date(weekStart);
-        date.setDate(weekStart.getDate() + index);
-
-        return (
-          <div
-            key={day}
-            className="flex flex-col items-center justify-center border p-1 font-semibold"
-          >
-            <span>{formatDay(date)}</span>
-            <span className="text-[9px] font-normal">{day}</span>
-          </div>
-        );
-      })}
+      {weekDays.map(({ day, date }) => (
+        <div
+          key={day}
+          className="flex flex-col items-center justify-center border p-1 font-semibold"
+        >
+          <span>{formatDay(date)}</span>
+          <span className="text-[9px] font-normal">{day}</span>
+        </div>
+      ))}
 
       {horary.map((hora, linha) => (
         <Fragment key={hora}>
@@ -78,17 +84,29 @@ export const AgendaTable = ({ shift, weekStart }: AgendaTableProps) => {
 
           <div className="border bg-[#DDF0FD] p-1 font-semibold">{hora}</div>
 
-          {days.map((day, coluna) => {
-            const reservation = reverse[`${linha}-${coluna}`];
+          {weekDays.map(({ day, dateKey }) => {
+            const reservation = reservations.find(
+              (item) =>
+                item.date === dateKey &&
+                item.shift === shift &&
+                item.lab === laboratory &&
+                item.time_slot === linha + 1 &&
+                item.status === "active",
+            );
 
             return (
               <div
                 key={day}
                 className={`min-h-16 border p-1 ${
-                  reservation ? colors[reservation.type] : "bg-[#DDF0FD]"
+                  reservation ? "bg-[#244870] text-white" : "bg-[#DDF0FD]"
                 }`}
               >
-                {reservation?.text}
+                {reservation && (
+                  <>
+                    <p className="font-semibold">{reservation.subject}</p>
+                    <p>{reservation.teacher}</p>
+                  </>
+                )}
               </div>
             );
           })}
