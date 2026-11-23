@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AgendaTable } from "@/components/agenda-table";
+import { getSchedules } from "@/lib/schedules";
+import { Schedule } from "@/types/schedule";
 
 const filters = [
   { label: "Laboratório", options: ["Lab 01", "Lab 02"] },
@@ -12,7 +14,6 @@ const filters = [
 const legend = [
   { text: "Disponível", color: "bg-[#DDF0FD]" },
   { text: "Reservado", color: "bg-[#244870]" },
-  { text: "Outro curso", color: "bg-[#5E8AB4]" },
 ];
 
 const formatDate = (date: Date) =>
@@ -35,8 +36,23 @@ const getMonday = (date: Date) => {
 
 export const AgendaView = () => {
   const [weekStart, setWeekStart] = useState(() => getMonday(new Date()));
+
   const [laboratory, setLaboratory] = useState("Lab 01");
   const [shift, setShift] = useState<"Manhã" | "Noite">("Manhã");
+
+  const [reservations, setReservations] = useState<Schedule[]>([]);
+  const [loadFailed, setLoadFailed] = useState(false);
+
+  useEffect(() => {
+    getSchedules()
+      .then((data) => {
+        setReservations(data);
+        setLoadFailed(false);
+      })
+      .catch(() => {
+        setLoadFailed(true);
+      });
+  }, []);
 
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 4);
@@ -61,11 +77,11 @@ export const AgendaView = () => {
 
             <select
               value={label === "Laboratório" ? laboratory : shift}
-              onChange={(e) => {
+              onChange={(event) => {
                 if (label === "Laboratório") {
-                  setLaboratory(e.target.value);
+                  setLaboratory(event.target.value);
                 } else {
-                  setShift(e.target.value as "Manhã" | "Noite");
+                  setShift(event.target.value as "Manhã" | "Noite");
                 }
               }}
               className="mt-1 h-10 w-full rounded-lg bg-[#244870] px-3 text-white"
@@ -79,6 +95,12 @@ export const AgendaView = () => {
           </label>
         ))}
       </div>
+
+      {loadFailed && (
+        <p className="text-sm font-semibold text-[#D64045]">
+          Não foi possível carregar as reservas da agenda.
+        </p>
+      )}
 
       <div className="flex items-center justify-between rounded-xl bg-[#EAF4FF]">
         <button
@@ -107,7 +129,12 @@ export const AgendaView = () => {
         </button>
       </div>
 
-      <AgendaTable shift={shift} weekStart={weekStart} />
+      <AgendaTable
+        shift={shift}
+        weekStart={weekStart}
+        laboratory={laboratory}
+        reservations={reservations}
+      />
 
       <div className="flex justify-around text-xs font-semibold text-[#4E8BB8]">
         {legend.map(({ text, color }) => (
