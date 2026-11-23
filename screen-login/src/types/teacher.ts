@@ -2,6 +2,7 @@ export type Teacher = {
   id: number;
   name: string;
   email: string;
-  matricula: string;
+  registration_number: string;
   role: "teacher" | "admin";
+  is_active: number | boolean;
 };

@@ -36,7 +36,7 @@ export const useTeachers = () => {
   }, [loadTeachers]);
 
   const filtered = teachers.filter((teacher) =>
-    `${teacher.name} ${teacher.matricula}`
+    `${teacher.name} ${teacher.registration_number}`
       .toLowerCase()
       .includes(search.toLowerCase()),
   );
@@ -73,8 +73,7 @@ export const useTeachers = () => {
     }
   };
 
-  const confirmDelete = () =>
-    runAndRefresh(() => deleteTeacher(deleting!.id));
+  const confirmDelete = () => runAndRefresh(() => deleteTeacher(deleting!.id));
 
   return {
     filtered,
