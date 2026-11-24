@@ -17,7 +17,11 @@ export const timeSlots: Record<"Manhã" | "Noite", Record<number, string>> = {
   },
 };
 
-export const getSchedules = (): Promise<Schedule[]> => request("/reservations");
+export const getPublicSchedules = (): Promise<Schedule[]> =>
+  request("/reservations");
+
+export const getSchedules = (): Promise<Schedule[]> =>
+  request("/reservations/manage");
 
 export const createSchedule = (data: Record<string, unknown>) =>
   request("/reservations", {

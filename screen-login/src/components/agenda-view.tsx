@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { AgendaTable } from "@/components/agenda-table";
-import { getSchedules } from "@/lib/schedules";
+import { getPublicSchedules } from "@/lib/schedules";
 import { Schedule } from "@/types/schedule";
 
 const filters = [
@@ -44,7 +44,7 @@ export const AgendaView = () => {
   const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
-    getSchedules()
+    getPublicSchedules()
       .then((data) => {
         setReservations(data);
         setLoadFailed(false);
