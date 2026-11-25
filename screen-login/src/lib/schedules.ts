@@ -39,3 +39,13 @@ export const deleteSchedule = (id: number) =>
   request(`/reservations/${id}`, {
     method: "DELETE",
   });
+
+export const approveSchedule = (id :number) =>
+  request(`/reservations/${id}/approve`,{
+    method: "PATCH",
+  });
+
+export const rejectSchedule = (id : number) =>
+  request(`/reservations/${id}/reject`,{
+    method: "PATCH",
+  });
