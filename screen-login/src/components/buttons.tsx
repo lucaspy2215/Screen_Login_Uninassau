@@ -8,6 +8,7 @@ type BotaoProps = {
   weight: "400" | "600";
   iconLeft?: ReactNode;
   className?: string;
+  disabled?: boolean;
 };
 
 export const Button = ({
@@ -18,21 +19,22 @@ export const Button = ({
   weight,
   iconLeft,
   className = "",
+  disabled = false,
 }: BotaoProps) => {
   const classes = {
     base: "flex flex-row items-center justify-center w-90 h-11 text-lg rounded-md py-2 px-4 gap-4 cursor-pointer font-inter rounded-xl",
     medium: "gap-4 py-3 px-7 text-base",
     large: "rounded-xl py-4.5 px-8 gap-5 text-base",
-    small: "w-56! rounded-full!", // ENTRAR
-    text: "w-auto! h-auto! p-0! text-sm! gap-1!", // Esqueci minha senha, Voltar
+    small: "w-56! rounded-full!",
+    text: "w-auto! h-auto! p-0! text-sm! gap-1!",
   };
 
   const colors = {
-    dark: "bg-[#4E8BB8] text-white", //Azul//
+    dark: "bg-[#4E8BB8] text-white",
     light: "bg-[#8ED5FF] text-[#00354A]",
-    navy: "bg-[#244870] text-white", //Azul escuro//
+    navy: "bg-[#244870] text-white",
     link: "bg-transparent text-[#4E8BB8]",
-    danger: "bg-[#D64045] text-white", //Vermelho//
+    danger: "bg-[#D64045] text-white",
   };
 
   const weightFont = {
@@ -44,6 +46,7 @@ export const Button = ({
     <button
       className={`${classes.base} ${size === "medium" ? classes.medium : ""} ${size === "large" ? classes.large : ""} ${size === "small" ? classes.small : ""} ${size === "text" ? classes.text : ""} ${colors[colorsParam]} ${weightFont[weight]} ${className}`}
       onClick={onClick}
+      disabled={disabled}
     >
       {iconLeft}
       {children}

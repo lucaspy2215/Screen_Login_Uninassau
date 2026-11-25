@@ -4,9 +4,14 @@ export type Schedule = {
   subject: string;
   course: string;
   lab: string;
-  date: string; // "2026-11-16"
+  date: string;
   shift: string;
   time_slot: number;
-  status: "active" | "completed";
-  
+  status:
+    | "pending"
+    | "active"
+    | "completed"
+    | "rejected"
+    | "cancelled"
+    | "cancellation_requested";
 };
