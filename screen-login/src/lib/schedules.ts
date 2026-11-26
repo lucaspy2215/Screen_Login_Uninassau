@@ -40,12 +40,17 @@ export const deleteSchedule = (id: number) =>
     method: "DELETE",
   });
 
-export const approveSchedule = (id :number) =>
-  request(`/reservations/${id}/approve`,{
+export const requestCancellation = (id: number) =>
+  request(`/reservations/${id}/request-cancellation`, {
     method: "PATCH",
   });
 
-export const rejectSchedule = (id : number) =>
-  request(`/reservations/${id}/reject`,{
+export const approveSchedule = (id: number) =>
+  request(`/reservations/${id}/approve`, {
+    method: "PATCH",
+  });
+
+export const rejectSchedule = (id: number) =>
+  request(`/reservations/${id}/reject`, {
     method: "PATCH",
   });

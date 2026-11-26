@@ -303,12 +303,12 @@ export default function ProfessorSchedulesPage() {
 
       <Modal open={!!deleting} onClose={closeModals}>
         <h2 className="text-center font-bold text-[#244870]">
-          CANCELAR RESERVA
+          SOLICITAR CANCELAMENTO
         </h2>
 
         <p className="mt-2 text-center font-semibold text-[#4A6A91]">
-          Tem certeza que deseja cancelar sua reserva? Essa ação não pode ser
-          desfeita.
+          Tem certeza de que deseja solicitar o cancelamento desta reserva? O
+          administrador precisará analisar sua solicitação.
         </p>
 
         {error && (
@@ -346,9 +346,9 @@ export default function ProfessorSchedulesPage() {
         closeButton
       >
         <h2 className="text-center font-bold text-[#244870]">
-          RESERVA CANCELADA
+          SOLICITAÇÃO DE CANCELAMENTO
           <br />
-          COM SUCESSO!
+          ENVIADA COM SUCESSO!
         </h2>
       </Modal>
     </div>
