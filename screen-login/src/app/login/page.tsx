@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/buttons";
 import { Input } from "@/components/input";
@@ -18,6 +18,8 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedRole = searchParams.get("role");
 
   const toEnterLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -26,6 +28,10 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
+      if (selectedRole !== "admin" && selectedRole !== "teacher") {
+        throw new Error("Selecione um tipo de acesso válido.");
+      }
+
       const result = await request<AuthSession>("/users/login", {
         method: "POST",
         body: JSON.stringify({
@@ -38,8 +44,12 @@ export default function LoginPage() {
         throw new Error("Resposta inválida do servidor.");
       }
 
-      if (result.user.role !== "admin" && result.user.role !== "teacher") {
-        throw new Error("Perfil de usuário inválido.");
+      if (result.user.role !== selectedRole) {
+        throw new Error(
+          selectedRole === "admin"
+            ? "Esta conta não possui acesso de administrador."
+            : "Esta conta não possui acesso de professor.",
+        );
       }
 
       saveSession(result);
@@ -76,6 +86,14 @@ export default function LoginPage() {
         </div>
 
         <Logo size="large" />
+
+        <h2 className="text-lg font-bold text-[#244870]">
+          {selectedRole === "admin"
+            ? "LOGIN ADMINISTRADOR"
+            : selectedRole === "teacher"
+              ? "LOGIN PROFESSOR"
+              : "LOGIN"}
+        </h2>
 
         <form
           onSubmit={toEnterLogin}
