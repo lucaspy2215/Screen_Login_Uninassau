@@ -4,6 +4,7 @@ import { Button } from "@/components/buttons";
 import { Logo } from "@/components/logo";
 import { useRouter } from "next/navigation";
 import { CalendarDays, Users, UserRound } from "lucide-react";
+import { ProjectCredit } from "@/components/project-credit";
 
 export default function HomePage() {
   const router = useRouter();
@@ -49,6 +50,8 @@ export default function HomePage() {
           </Button>
         </div>
       </div>
+
+      <ProjectCredit />
 
       <h3 className="pb-4 text-lg font-semibold text-black">AGENDAMENTO LAB</h3>
     </div>
