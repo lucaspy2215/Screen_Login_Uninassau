@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import { ArrowLeft, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ProjectCredit } from "@/components/project-credit";
 
 import { Button } from "@/components/buttons";
 import { Input } from "@/components/input";
@@ -148,6 +149,8 @@ export default function LoginPage() {
           </Button>
         </form>
       </div>
+
+      <ProjectCredit />
 
       <h3 className="pb-4 text-lg font-semibold text-black">
         AGENDAMENTO LAB.
