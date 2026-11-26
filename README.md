@@ -1,4 +1,3 @@
-
 # Lab Agenda — Front-End
 
 <p align="center">
@@ -51,7 +50,6 @@ As interfaces do Lab Agenda foram planejadas e prototipadas no Figma, buscando p
 
 <!-- Adicione abaixo as imagens exportadas do Figma -->
 
-
 ### Login
 
 <p align="center">
@@ -84,21 +82,18 @@ As interfaces do Lab Agenda foram planejadas e prototipadas no Figma, buscando p
 
 ## Protótipo no Figma
 
-<img width="814" height="782" alt="Captura de Tela 2026-11-26 às 15 08 20" src="https://github.com/user-attachments/assets/f3306d51-ac45-4c96-9309-355a79ae8e94" />
+<img width="814" height="782" alt="Captura de Tela 2026-11-26 às 15 08 20" src="https://github.com/user-attachments/assets/f3306d51-ac45-4c96-9309-355a79ae8e94" />
 
+**[Acessar protótipo do Lab Agenda no Figma](https://www.figma.com/design/LPh3jcYR9S49rnmPUadnzx/Lab?node-id=0-1&p=f&t=viGdsfI4chkYsXz5-0)**
 
-**[Acessar protótipo do Lab Agenda no Figma]
-(https://www.figma.com/design/LPh3jcYR9S49rnmPUadnzx/Lab?node-id=0-1&p=f&t=viGdsfI4chkYsXz5-0)**
-
-## Instalação
+## Instalação Do Front
 
 https://github.com/lucaspy2215/Screen_Login_Uninassau
 
 # Instalacao Back
 
-
 ```bash
-git clone <url-do-repositorio>
+git clone https://github.com/lucaspy2215/Screen_Login_Uninassau.git
 ```
 
 Acesse a pasta do projeto:
