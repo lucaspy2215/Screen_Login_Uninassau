@@ -15,10 +15,11 @@ import {
 import { Schedule } from "@/types/schedule";
 
 type Shift = "Manhã" | "Noite";
+type ShiftFilter = Shift | "Todos";
 type Confirmation = "approve" | "reject";
 type Success = "approved" | "rejected";
 
-const shifts: Shift[] = ["Manhã", "Noite"];
+const shifts: ShiftFilter[] = ["Todos", "Manhã", "Noite"];
 
 const nameInitials = (name: string) =>
   name
@@ -42,7 +43,7 @@ export default function RequestsPage() {
   const router = useRouter();
 
   const [requests, setRequests] = useState<Schedule[]>([]);
-  const [shift, setShift] = useState<Shift>("Noite");
+  const [shift, setShift] = useState<ShiftFilter>("Todos");
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Schedule | null>(null);
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null);
@@ -75,7 +76,7 @@ export default function RequestsPage() {
 
   const filtered = requests.filter(
     (item) =>
-      item.shift === shift &&
+      (shift === "Todos" || item.shift === shift) &&
       `${item.teacher} ${item.subject} ${item.course} ${item.lab}`
         .toLowerCase()
         .includes(search.toLowerCase()),
@@ -134,7 +135,7 @@ export default function RequestsPage() {
             Turno
             <select
               value={shift}
-              onChange={(event) => setShift(event.target.value as Shift)}
+              onChange={(event) => setShift(event.target.value as ShiftFilter)}
               className="mt-1 block h-10 w-36 rounded-lg bg-[#244870] px-3 text-white"
             >
               {shifts.map((option) => (

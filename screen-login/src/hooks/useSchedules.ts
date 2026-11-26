@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
 import type { SyntheticEvent } from "react";
 
+import { getSession } from "@/lib/auth";
 import { closedFormValues } from "@/lib/forms";
 import {
   createSchedule,
+  deleteSchedule,
   getSchedules,
   requestCancellation,
   updateSchedule,
@@ -11,6 +13,20 @@ import {
 import { getTeachers } from "@/lib/teachers";
 import type { Schedule } from "@/types/schedule";
 import type { Teacher } from "@/types/teacher";
+
+const teacherVisibleStatuses = [
+  "pending",
+  "active",
+  "cancellation_requested",
+  "completed",
+];
+
+const normalize = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
 
 export const useSchedules = () => {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -26,6 +42,8 @@ export const useSchedules = () => {
   const [error, setError] = useState("");
   const [loadFailed, setLoadFailed] = useState(false);
   const [teacherLoadFailed, setTeacherLoadFailed] = useState(false);
+
+  const role = getSession()?.user.role;
 
   const loadSchedules = useCallback(async () => {
     try {
@@ -54,26 +72,48 @@ export const useSchedules = () => {
 
   useEffect(() => {
     loadSchedules();
-    loadTeachers();
-  }, [loadSchedules, loadTeachers]);
 
-  const filtered = schedules.filter((item) => {
-    const searchTerm = search.trim().toLowerCase();
+    if (role === "admin") {
+      loadTeachers();
+    } else {
+      setTeachersLoading(false);
+    }
+  }, [loadSchedules, loadTeachers, role]);
+
+  const visibleSchedules =
+    role === "teacher"
+      ? schedules.filter((item) => teacherVisibleStatuses.includes(item.status))
+      : schedules;
+
+  const filtered = visibleSchedules.filter((item) => {
+    const searchTerm = normalize(search);
+
+    if (!searchTerm) return true;
 
     const [year, month, day] = item.date.split("-");
     const formattedDate = `${day}/${month}/${year}`;
-    const normalizedDate = `${day}${month}${year}`;
-    const normalizedSearch = searchTerm.replace(/\D/g, "");
+    const compactDate = `${day}${month}${year}`;
+    const numericSearch = searchTerm.replace(/\D/g, "");
 
-    const matchesTeacher = item.teacher.toLowerCase().includes(searchTerm);
+    const searchableFields = [
+      item.teacher,
+      item.subject,
+      item.course,
+      item.lab,
+      item.shift,
+      item.status,
+      item.date,
+      formattedDate,
+    ];
 
-    const matchesDate =
-      item.date.includes(searchTerm) ||
-      formattedDate.includes(searchTerm) ||
-      (normalizedSearch.length > 0 &&
-        normalizedDate.includes(normalizedSearch));
+    const matchesText = searchableFields.some((field) =>
+      normalize(String(field ?? "")).includes(searchTerm),
+    );
 
-    return matchesTeacher || matchesDate;
+    const matchesCompactDate =
+      numericSearch.length > 0 && compactDate.includes(numericSearch);
+
+    return matchesText || matchesCompactDate;
   });
 
   const closeModals = () => {
@@ -124,10 +164,12 @@ export const useSchedules = () => {
   const confirmDelete = () => {
     if (!deleting) return;
 
-    void runAndRefresh(
-      () => requestCancellation(deleting.id),
-      () => setDeleteSuccess(true),
-    );
+    const action =
+      role === "teacher"
+        ? () => requestCancellation(deleting.id)
+        : () => deleteSchedule(deleting.id);
+
+    void runAndRefresh(action, () => setDeleteSuccess(true));
   };
 
   return {
