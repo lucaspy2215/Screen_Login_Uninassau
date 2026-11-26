@@ -4,8 +4,8 @@ import type { SyntheticEvent } from "react";
 import { closedFormValues } from "@/lib/forms";
 import {
   createSchedule,
-  deleteSchedule,
   getSchedules,
+  requestCancellation,
   updateSchedule,
 } from "@/lib/schedules";
 import { getTeachers } from "@/lib/teachers";
@@ -125,7 +125,7 @@ export const useSchedules = () => {
     if (!deleting) return;
 
     void runAndRefresh(
-      () => deleteSchedule(deleting.id),
+      () => requestCancellation(deleting.id),
       () => setDeleteSuccess(true),
     );
   };
