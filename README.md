@@ -86,11 +86,9 @@ As interfaces do Lab Agenda foram planejadas e prototipadas no Figma, buscando p
 
 **[Acessar protótipo do Lab Agenda no Figma](https://www.figma.com/design/LPh3jcYR9S49rnmPUadnzx/Lab?node-id=0-1&p=f&t=viGdsfI4chkYsXz5-0)**
 
-## Instalação Do Front
+## Instalação
 
-https://github.com/lucaspy2215/Screen_Login_Uninassau
-
-# Instalacao Back
+# Instalacao Front
 
 ```bash
 git clone https://github.com/lucaspy2215/Screen_Login_Uninassau.git
