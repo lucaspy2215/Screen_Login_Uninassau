@@ -322,7 +322,7 @@ export default function ProfessorSchedulesPage() {
             weight="600"
             onClick={confirmDelete}
           >
-            Cancelar
+            Solicitar Cancelamento 
           </Button>
         </div>
       </Modal>
